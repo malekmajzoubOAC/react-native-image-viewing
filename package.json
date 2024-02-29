@@ -1,5 +1,5 @@
 {
-  "name": "@OAC/react-native-image-viewing",
+  "name": "@oneautocar/react-native-image-viewing",
   "version": "0.2.2",
   "description": "This is a forked project of React Native Image Viewing library to fix a bug on android with image zoom and swipe",
   "main": "dist/index.js",
