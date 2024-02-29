@@ -140,6 +140,7 @@ function ImageViewing({
               delayLongPress={delayLongPress}
               swipeToCloseEnabled={swipeToCloseEnabled}
               doubleTapToZoomEnabled={doubleTapToZoomEnabled}
+              currentImageIndex={currentImageIndex}
             />
           )}
           onMomentumScrollEnd={onScroll}
@@ -186,7 +187,10 @@ const styles = StyleSheet.create({
 });
 
 const EnhancedImageViewing = (props: Props) => (
-  <ImageViewing key={props.imageIndex} {...props} />
+  <ImageViewing
+    key={props.imageIndex}
+    {...props}
+  />
 );
 
 export default EnhancedImageViewing;

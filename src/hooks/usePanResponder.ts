@@ -40,6 +40,7 @@ type Props = {
   doubleTapToZoomEnabled: boolean;
   onLongPress: () => void;
   delayLongPress: number;
+  currentImageIndex: number;
 };
 
 const usePanResponder = ({
@@ -49,6 +50,7 @@ const usePanResponder = ({
   doubleTapToZoomEnabled,
   onLongPress,
   delayLongPress,
+  currentImageIndex,
 }: Props): Readonly<
   [GestureResponderHandlers, Animated.Value, Animated.ValueXY]
 > => {
@@ -119,6 +121,20 @@ const usePanResponder = ({
 
     return () => scaleValue.removeAllListeners();
   });
+
+  useEffect(() => {
+    onZoom(false);
+
+    // workaround for a bug where scaleValue gets incorrectly set after zooming then swiping.
+    // https://github.com/jobtoday/react-native-image-viewing/issues/158
+    const timeout = setTimeout(() => {
+      scaleValue.setValue(initialScale);
+      currentScale = initialScale;
+      currentTranslate = initialTranslate;
+    }, 100);
+
+    return () => clearTimeout(timeout);
+  }, [currentImageIndex]);
 
   const cancelLongPressHandle = () => {
     longPressHandlerRef && clearTimeout(longPressHandlerRef);
@@ -280,9 +296,8 @@ const usePanResponder = ({
       if (isTapGesture && currentScale > initialScale) {
         const { x, y } = currentTranslate;
         const { dx, dy } = gestureState;
-        const [topBound, leftBound, bottomBound, rightBound] = getBounds(
-          currentScale
-        );
+        const [topBound, leftBound, bottomBound, rightBound] =
+          getBounds(currentScale);
 
         let nextTranslateX = x + dx;
         let nextTranslateY = y + dy;
@@ -347,9 +362,8 @@ const usePanResponder = ({
 
       if (tmpTranslate) {
         const { x, y } = tmpTranslate;
-        const [topBound, leftBound, bottomBound, rightBound] = getBounds(
-          currentScale
-        );
+        const [topBound, leftBound, bottomBound, rightBound] =
+          getBounds(currentScale);
 
         let nextTranslateX = x;
         let nextTranslateY = y;
